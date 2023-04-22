@@ -14,6 +14,7 @@ const postingroute = require('./Router/PostinganRoute')
 const todoRoute = require('./Router/Todoroute')
 const follow = require('./Router/follow')
 const comments = require('./Router/commentsRoute')
+const likes = require('./Router/likeroute')
 const cors = require('cors')
 
 
@@ -40,6 +41,7 @@ app.use('/',uploadImageroute)
 app.use('/',postingroute)
 app.use('/',follow)
 app.use('/',comments)
+app.use('/',likes)
 
 app.get('/random-image', (req, res) => {
   const directoryPath = patho.join(__dirname, 'images');

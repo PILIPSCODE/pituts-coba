@@ -25,6 +25,14 @@ const commentsmodel = mongoose.Schema({
     },
     date:{
         type:String
+    },
+    bio:{
+        type:String,
+        require:true
+    },
+    web:{
+        type:String,
+        require:true
     }
 })
 

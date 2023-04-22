@@ -39,7 +39,11 @@ const postScema = mongoose.Schema({
     comments:{
         type:String,
         default:0
-    }
+    },
+    likes:{
+        default:0,
+        type:String
+    },
 })
 
 const postModel = mongoose.model("post",postScema)

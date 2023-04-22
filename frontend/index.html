@@ -29,7 +29,7 @@
     </div>
     <div class="navigasi">
         <div class="children">
-            <a href="#" class="Home-nav nav-coy"><i class="bi bi-house-fill icons"></i>
+            <a href="#" class="Home-nav nav-coy ontap"><i class="bi bi-house-fill icons"></i>
                 <h3 class="tiltup">Home</h3>
             </a>
         </div>
@@ -67,116 +67,13 @@
 <div class="center">
     
     <div class="search-toggle">
-        <div class="input">
-           <i class="bi bi-search search"></i>
-           <input type="text" required class="search-input" placeholder="Search-User">
-        </div>
+        <form class="input" id="search">
+            <button type="submit"><i  class="bi bi-search search"></i></button>
+            <input type="text" required class="search-input" placeholder="Search-User">
+        </form>
         <div class="map-hasilSearch">
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
-            <div class="user-search">
-           <img src="./img/cek.png">
-                 <div class="search-user-name-bio">
-                    <h6>Pilipus</h6>
-                    <p>Menguasai Dunia</p>
-                 </div>
-            </div>
+           
+           
         </div>
     </div>
 </div>
@@ -408,7 +305,8 @@
 
 <!-- Profile -->
 <div class="display-profile">
-    
+    <a href="#" class="logout nav-coy profile-logout"><i class=" bi bi-power  icons"></i>
+    </a>
         <div class="atas">
             <div class="pp">
               
@@ -555,6 +453,35 @@
         </div>
 
     </div>
+
+    <div class="kuncung">
+
+        <div class="edit-post-con">
+            <i class="bi bi-x-lg close-post"></i>
+            <div class="title-post">
+                <h1>Edit tuts</h1>
+            </div>
+            <div class="img-otw-post">
+                <img class="img-upload-post img-v-edit" src="" alt="" srcset="">
+                <div class="edit">
+                    
+                </div>
+            </div>
+            <div class="input-btn-post">
+                
+                <div class="profile-post text-dark">
+                    <img src="./img/cek.png"  class="profile-img-post kun">
+                        <h6 id="pp-name" class="ppname-edit">Pilipus</h6>
+                </div>
+                <textarea name="postText" class="v-editinput-post" id="" placeholder="Tulis Keterangan" required></textarea>
+    
+                <button type="submit" class="btn-post-vedit">Edit-tuts</button>
+            </div>
+    
+        </div>
+    </div>
+    
+    
      
    <script src="script.js"></script>
    <script src="signinup.js"></script>

@@ -12,7 +12,6 @@ const [
   profileName,
   Bio,
   ppProfile,
-  logout,
   Web,
   msgIn,
   msgUp,
@@ -36,7 +35,6 @@ const [
   ".profile-name",
   ".bio",
   ".pp-profile",
-  ".logout",
   ".web",
   ".msg-in",
   ".msg-up",
@@ -208,17 +206,24 @@ const EditProfile = (datas) => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          location.reload();
+          location.reload()
+        
         }
       })
       .catch((err) => console.log(err));
   });
 };
 
-logout.addEventListener("click", () => {
-  localStorage.removeItem("token");
-  location.reload();
-});
+
+const logout = document.querySelectorAll(".logout")
+
+
+logout.forEach(e => {
+  e.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    location.reload();
+  });
+})
 
 function mappingpostuserp(e) {
   return `

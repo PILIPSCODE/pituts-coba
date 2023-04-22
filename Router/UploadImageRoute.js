@@ -17,14 +17,23 @@ router.put('/upload/:id',(req,res) => {
             console.log(req.file)
             if(req.file === undefined){
                 const name = await Users.findOne({name:req.body.name});
-                if(name)
-                return res.status(409).send({message:"name Already Exist!"})
+                console.log(name)
+                if(name == null){
+
+                }else{
+                    if(name._id == req.params.id){
+                        
+                    }else{
+                        return res.status(409).send({message:"name Already Exist!"})
+                }
+                    
+                }
                 await Users.updateOne({_id:req.params.id},{
                     $set:{name:req.body.name,bio:req.body.bio,web:req.body.web}
                  })
                 await comments.updateMany(
                     {email:req.body.email},
-                    {$set:{nameofcomment:req.body.name}
+                    {$set:{nameofcomment:req.body.name,bio:req.body.bio,web:req.body.web}
                 })
                 await postModel.updateMany(
                     {email:req.body.email},
@@ -34,8 +43,16 @@ router.put('/upload/:id',(req,res) => {
             }else{
                 const filename  = req.body.imgold;
                 const name = await Users.findOne({name:req.body.name});
-                if(name)
-                return res.status(409).send({message:"name Already Exist!"})
+                if(name == null){
+
+                }else{
+                    if(name._id == req.params.id){
+    
+                    }else{
+                        return res.status(409).send({message:"name Already Exist!"})
+    
+                    }
+                }
                 if(filename !== "nologin pic.jpg"){
 
                     const imagePath = path.join(__dirname,'../',filename);
@@ -50,7 +67,7 @@ router.put('/upload/:id',(req,res) => {
               
                  await comments.updateMany(
                       {email:req.body.email},
-                      {$set:{ppofcomment:req.file.path,nameofcomment:req.body.name}
+                      {$set:{ppofcomment:req.file.path,nameofcomment:req.body.name,bio:req.body.bio,web:req.body.web}
                   })
                   await postModel.updateMany(
                       {email:req.body.email},

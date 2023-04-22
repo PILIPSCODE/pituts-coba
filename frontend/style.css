@@ -133,7 +133,11 @@ body {
     outline: 0;
     border-bottom-color: white;
 }
-
+.search-toggle button{
+    background: none;
+    color: white;
+    border: none;
+}
 .map-hasilSearch {
     margin-top: 20px;
 }
@@ -152,6 +156,7 @@ body {
     display: flex;
     align-items: center;
     padding: 5px 10px;
+    justify-content: space-between;
     color: #1B2326;
 }
 
@@ -159,7 +164,18 @@ body {
     margin: 0;
     border-bottom: 1px solid #1B2326;
 }
-
+.action-follow-friend{
+    display: flex;
+    height: 100%;
+    margin-left: 5px;
+    padding: 5px;
+}
+.follow{
+  display: none;
+}
+.pemisah{
+    display: flex;
+}
 
 
 /* end nav */
@@ -358,7 +374,6 @@ body {
     -webkit-box-shadow: 0px 0px 98px -60px rgba(255, 255, 255, 0.75);
     -moz-box-shadow: 0px 0px 98px -80px rgba(255, 255, 255, 0.75);
     display: flex;
-    pointer-events: none;
     flex-direction: column;
     background: #1B2326;
 }
@@ -400,18 +415,13 @@ body {
     margin: 0px 10px;
 }
 
-.com-like .bi-chat-right-fill {
-    pointer-events: fill;
 
-}
 
-.bi-chat-right-fill span {
+.com-like span {
     margin-left: 5px;
-}
-
-.com-like {
     color: white;
 }
+
 
 .com-like i {
     font-size: 25px;
@@ -423,7 +433,13 @@ body {
     word-break: break-all;
     margin: 10px 5px;
 }
-
+.bi-chat-right-fill{
+    pointer-events: fill;
+    color: white;
+}
+.merah{
+    color: red;
+}
 /* Todo-List */
 
 .Todo-list {
@@ -822,7 +838,16 @@ body {
     justify-content: center;
     align-items: center;
 }
-
+.kuncung{
+    width: 100%;
+    margin: 0;
+    display: none;
+    z-index: 1000000000000000001;
+    height: 100vh;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+}
 .container-post {
     overflow: inherit;
     background: #F5FEFD;
@@ -901,6 +926,13 @@ body {
     display: none;
 
 }
+.edit-post-con{
+    width: 70%;
+    background: #F5FEFD;
+    border-radius: 10px;
+    height: 80%;
+    display: flex;
+}
 
 .input-btn-post {
     display: flex;
@@ -909,7 +941,7 @@ body {
     flex-direction: column;
 }
 
-.input-post {
+.input-post,.v-editinput-post {
     height: 100px;
     outline: none;
     background-color: #F5FEFD;
@@ -942,7 +974,7 @@ body {
     border-radius: 50px;
 }
 
-.btn-post {
+.btn-post ,.btn-post-vedit{
     padding: 5px;
     transition: 0.5s;
     color: #F5FEFD;
@@ -1071,7 +1103,7 @@ body {
 }
 .user-modal img {
     width: 40px;
-    margin-right: 10px;
+    margin:5px 10px;
     border-radius: 50px;
     height: 40px;
 }
@@ -1098,6 +1130,7 @@ body {
     margin: 0px;
     word-break: break-all;
     padding: 0px;
+    width: 100%;
 }
 
 .bi-three-dots-vertical {
@@ -1117,16 +1150,34 @@ body {
 .muncul {
     display: block;
 }
+.del-comment{
+color: red;
+margin-left: 10px;
+}
+.flux{
+    display: flex;
+    width: 100%;
+}
+.none{
+    display: none;
+}
 
 .titik3 h3 {
     border-bottom: 1px solid black;
+}
+.profile-logout{
+    position: absolute;
+    color: white;
+    display: none;
+    right: 0px;
 }
 /* responsive */
 @media(max-width:786px) {
     .children a.ontap {
         background-color: #10F5CC;
         color: #1B2326;
-        border-radius: 0px;
+        border-radius: 10px;
+        
     }
     .input-btn-modal {
         width: 100%;
@@ -1140,12 +1191,10 @@ body {
         border-left: 0px;
         overflow:scroll;
     }
-    .img-coke{
-       
-        
-    }
    
-
+    .oy .logout{
+        display: none;
+    }
     .comment h4 {
         margin-left: 10px;
     }
@@ -1166,6 +1215,9 @@ body {
     }
 
     .upload-img-text {
+        flex-direction: column;
+    }
+    .edit-post-con{
         flex-direction: column;
     }
 
@@ -1195,9 +1247,10 @@ body {
     .fol-lik-wers {
         justify-content: center;
     }
-
+    
     .sidebar-todo {
         width: 100%;
+        height: 91vh;
     }
 
     .search-toggle {
@@ -1282,8 +1335,12 @@ body {
     .kotak-post {
         display: none;
     }
-
-
+    .profile-logout{
+        position: absolute;
+        color: white;
+        display: block;
+        right: 20px;
+    }
 }
 
 @media(max-width:640px) {
@@ -1343,7 +1400,13 @@ body {
     .subpage {
         width: 0%;
     }
-
+    .route-signup-sign{
+        color: #1B2326;
+        padding: 5px;
+        background-color: #F5FEFD;
+        margin-left: 5px;
+        text-decoration: none;
+    }
     .subpage-sign-up {
         display: none;
     }

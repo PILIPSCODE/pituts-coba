@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { upload } = require("../middelware/uploadImage");
 const postModel = require("../models/Postingan");
 const comments = require('../models/comments')
-
+const like = require("../models/like")
 const {randomString,date,time} = require('../auth/auth')
 const fs =require('fs')
 const path = require('path')
@@ -14,7 +14,12 @@ router.get("/YourPost",(req,res) => {
   })
 })
 
-
+router.put('/putPost/:id',(req,res) => {
+  postModel.findOneAndUpdate({_id:req.params.id},req.body,{new:true},(err,data) => {
+    if(err) console.log(err)
+    res.json(data)
+  })
+})
 
 router.get("/YourPost/:id",(req,res) => {
   postModel.findById(req.params.id,(err,data) => {
@@ -26,6 +31,7 @@ router.delete("/YourPost/:id",(req,res) => {
   const filename  = req.body.img;
   const imagePath = path.join(__dirname,'../',filename);
   comments.deleteMany({filter:req.body.filter},(err,data) => {})
+  like.deleteMany({filt:req.body.filter},(err,data) => {})
   fs.unlink(imagePath, (err) => {
     if (err) {
       console.error(err);
@@ -43,6 +49,11 @@ router.delete("/YourPost/:id",(req,res) => {
 router.put("/putcommmany/:filter",async(req,res) => {
  await postModel.updateOne({filter:req.params.filter},{
     $set:{comments:req.body.commentar}
+  })
+})
+router.put("/putlikes/:filter",async(req,res) => {
+ await postModel.updateOne({filter:req.params.filter},{
+    $set:{likes:req.body.likes}
   })
 })
 

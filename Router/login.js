@@ -28,11 +28,21 @@ router.get('/profile',auth,async(req,res) => {
   })
 })
 
-router.get('/todopub',(req,res) => {
-    Users.find({todoispublic:true},(err,data) => {
+router.get('/infouser',(req,res) => {
+    Users.find((err,data) => {
         if(err) console.log(err)
         res.json(data)
     })
+})
+router.get('/infouser/:name',(req,res) => {
+   
+
+        Users.findOne({name:req.params.name},(err,data) => {
+            if(err) console.log(err)
+            res.json(data)
+        })
+   
+
 })
 
 router.post('/tokenValid', async (req,res) => {

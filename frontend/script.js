@@ -1,5 +1,3 @@
-
-
 const ENDPOINT = `http://localhost:8080`;
 // Memilih elemen DOM
 const el = (selector) => document.querySelector(selector);
@@ -40,8 +38,10 @@ const [
   yourtodolist,
   deletemaintodo,
   infoacc,
-  imgcoke
-  
+  imgcoke,
+  kuncung,
+  mapHasilSearch,
+  search,
 ] = [
   ".todo-nav",
   ".search-nav",
@@ -79,12 +79,14 @@ const [
   ".cuki",
   ".deletemaintodo",
   ".info-acc",
-  '.img-coke'
+  ".img-coke",
+  ".kuncung",
+  ".map-hasilSearch",
+  "#search",
 ].map((selector) => el(selector));
 
 // loading
 let loading = false;
-
 
 if (!loading) {
   document.querySelector(".blog").innerHTML = `
@@ -158,7 +160,6 @@ navigasi.addEventListener("click", (e) => {
 });
 let token;
 
-
 const closePost = document.querySelectorAll(".close-post");
 // Menambahkan event listener ke elemen searchNav dan menampilkan/menyembunyikan searchcon
 searchNav.addEventListener("click", () => {
@@ -167,7 +168,7 @@ searchNav.addEventListener("click", () => {
   } else {
     loginsign.style.display = "flex";
     containerblog.style.display = "none";
-    getprofile()
+    getprofile();
     Todolist.style.display = "none";
   }
 });
@@ -190,7 +191,7 @@ HomeNav.addEventListener("click", () => {
     loginsign,
   ].forEach((el) => (el.style.display = "none"));
   containerblog.style.display = "block";
-  getprofile()
+  // getprofile();
 });
 
 // Menambahkan event listener ke elemen todoNav untuk menampilkan todolist dan menyembunyikan blog dan displayProfile
@@ -204,7 +205,6 @@ todoNav.addEventListener("click", () => {
     loginsign,
   ].forEach((el) => (el.style.display = "none"));
   Todolist.style.display = "flex";
-  getprofile()
 });
 
 // Menambahkan event listener ke elemen navProfile untuk menampilkan displayProfile dan menyembunyikan blog dan todolist
@@ -232,9 +232,6 @@ Close.addEventListener("click", () => {
   SideBarTodo.classList.remove("active-side-todo");
 });
 
-// btn private-public todo
-
-
 editProfile.addEventListener("click", () => {
   [containerblog, Todolist, displayProfile, absolute].forEach(
     (el) => (el.style.display = "none")
@@ -256,6 +253,49 @@ postNav.addEventListener("click", () => {
   }
 });
 
+// search user
+const alluser = async () => {
+  const res = await fetch(`${ENDPOINT}/infouser`);
+
+  const data = await res.json();
+  let str = "";
+  data.map((res) => {
+    str += htmlsearch(res);
+  });
+  mapHasilSearch.innerHTML = str;
+};
+
+search.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const inputSearch = document.querySelector(".search-input").value;
+
+  const res = await fetch(`${ENDPOINT}/infouser/${inputSearch}`);
+  const data = await res.json();
+  if (data == null) {
+    mapHasilSearch.innerHTML = "User tidak ditemukan";
+  }
+  mapHasilSearch.innerHTML = htmlsearch(data);
+});
+
+alluser();
+
+const htmlsearch = (e) => {
+  return ` <div class="user-search">
+  <div class="pemisah">
+  <img src="${e.image}">
+        <div class="search-user-name-bio">
+           <h6>${e.name}</h6>
+           <p>${e.bio}</p>
+        </div>
+        </div>
+        <div class="action-follow-friend">
+           <i class="bi bi-people-fill"></i>
+           <h6 class="follow">Follow</h6>
+        </div>
+        </div>
+  `;
+};
+
 let cropper;
 uploadImgPost.addEventListener("change", async function (e) {
   let path = URL.createObjectURL(e.target.files[0]);
@@ -270,6 +310,7 @@ const profileusers = (data) => {
   profileuser = data;
   ppname.innerHTML = data.name;
   profileimgpost.src = data.image;
+  displaylike()
 };
 
 absolute.addEventListener("submit", (e) => {
@@ -325,41 +366,178 @@ const mappContentBlog = async () => {
   blog.innerHTML = el;
 };
 
+// like;
+let liko;
+const displaylike = async (e) => {
+  const res = await fetch(`${ENDPOINT}/like`);
+  const data = await res.json();
+  if(e){
+    let rescok = data.filter((resp) => {
+      if(resp.filt == e.filter){
+        return resp
+      }
+      return resp.filt === e.filter
+    })
+      liko = rescok.length 
+      const likeButton = document.getElementById(`${e.filter}`);
+      console.log(rescok.length)
+      putlike(e.filter,rescok.length)
+        likeButton.textContent = rescok.length
+  }else{
+
+   let resu = data.filter((resp) => {
+        if (resp.nameoflike == profileuser.name) {
+          return resp;
+        }
+        return resp.nameoflike === profileuser.name
+      })
+      // liketot(data)
+  windowreload(resu)
+  }
+};
+
+let postId;
+const windowreload = (resu) => {
+ 
+    resu.forEach(postId => {
+          const likeButton = document.getElementById(`${postId.filt}`);
+          likeButton.classList.add('merah')
+          localStorage.setItem(`liked_${postId.filt}`, 'true');
+          let hi = {
+            filter:postId.filt
+          }
+          postId = hi
+          displaylike(hi)
+     });
+  
+}
 
 
+const putlike =(e,jumlah) => {
+      fetch(`${ENDPOINT}/putlikes/${e}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          likes: `${jumlah}`,
+        }),
+      }).then()
+}
+
+
+
+
+
+
+
+
+ window.addEventListener('load', event => {
+   // Cek status suka pada local storage
+   if(postId !== undefined){
+     const likeButton = document.getElementById(`${postId.filter}`);
+      const isLiked = localStorage.getItem(`liked_${postId.filter}`);
+      if (isLiked === 'true') {
+        likeButton.classList.add('merah');
+      }
+   }
+  });
+
+// coments
+let userinfors;
 blog.addEventListener("click", (e) => {
-
-  const cuy = e.target.parentElement.dataset.text.split(' ',4).join(' ')
   const userinfor = {
     image: e.target.parentElement.dataset.image,
     filter: e.target.parentElement.dataset.filter,
     name: e.target.parentElement.dataset.name,
     pp: e.target.parentElement.dataset.pp,
     fulltext: e.target.parentElement.dataset.text,
-    text:cuy +  `<a class="slengkapnya">selengkapnya</a>`,
     id: e.target.parentElement.dataset.id,
   };
-
-
-
-
+  userinfors = userinfor;
 
   displayComments(userinfor);
+  // liketot(userinfor)
+
+  if(e.target.dataset.click !== undefined){
+    displaylike(userinfor)
+  if(e.target.classList == "bi bi-heart-fill"){
+    fetch(`${ENDPOINT}/like`,{
+      method:"POST",
+      headers:{
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        nameoflike:profileuser.name,
+        filter:userinfor.filter + profileuser.id,
+        ppoflikes:profileuser.image,
+        bio:profileuser.bio,
+        web:profileuser.web,
+        filt:userinfor.filter
+      })
+    }).then(res => res.json())
+    .then((data) => {
+     
+    e.target.classList.add('merah')
+    let coelike = Number(e.target.textContent)
+    if(coelike == 0){
+    e.target.textContent = `${coelike += 1}`
+    } 
+    
+    e.target.textContent = `${coelike}`
+    // if(liko !== undefined){
+
+  
+    
+    })
+    
+    
+  }else{
+    displaylike(userinfor)
+    fetch(`${ENDPOINT}/like/${userinfor.filter}${profileuser.id}`,{
+      method:"DELETE",
+      body:null, 
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then(() => {
+    e.target.classList.remove('merah')
+    localStorage.removeItem(`liked_${userinfor.filter}`, 'true');
+    let coelike = Number(e.target.textContent) - 1
+    e.target.textContent = `${coelike}`
+  //   if(liko !== undefined){
+  //   fetch(`${ENDPOINT}/putlikes/${userinfor.filter}`, {
+  //     method: "PUT",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       likes: `${liko}`,
+  //     }),
+  //   }).then()
+  // }
+    })
+  }
+
+  }
+ 
+
 
   if (e.target.className == "bi bi-chat-right-fill") {
-    pengdisplayan(userinfor);
+    let cuy = e.target.parentElement.dataset.text.split(" ", 4).join(" ");
+    let text = cuy + `<a class="slengkapnya">selengkapnya</a>`;
+
+    pengdisplayan(userinfor, text);
     hapuspostfun(userinfor);
     btnComment.addEventListener("click", (e) => {
       Commentos(userinfor);
     });
   }
-  const slengkapnya = document.querySelector('.slengkapnya')
-  slengkapnya.addEventListener("click",() => {
-    usertextpost.innerHTML = userinfor.fulltext
-    imgcoke.style.overflowY="scroll"
-  })
 });
 
+
+
+const mapcom = document.querySelector(".map-comment");
 let coek = "";
 const displayComments = async (e) => {
   const res = await fetch(`${ENDPOINT}/comments`);
@@ -375,7 +553,7 @@ const displayComments = async (e) => {
     .map((data) => {
       datacomm += commentshtml(data);
     });
-  document.querySelector(".map-comment").innerHTML = datacomm;
+  mapcom.innerHTML = datacomm;
 
   const resp = await data.filter((resp) => {
     if (resp.filter == e.filter) {
@@ -386,8 +564,7 @@ const displayComments = async (e) => {
   coek = resp.length += 1;
 };
 const Commentos = async (userinfor) => {
-  if(!comments.value == ''){
-
+  if (!comments.value == "") {
     const res = await fetch(`${ENDPOINT}/comments`, {
       method: "POST",
       headers: {
@@ -399,6 +576,8 @@ const Commentos = async (userinfor) => {
         ppofcomment: profileuser.image,
         comment: comments.value,
         email: profileuser.email,
+        bio: profileuser.bio,
+        web: profileuser.web,
       }),
     }).then(() => {
       displayComments(userinfor);
@@ -417,30 +596,80 @@ const Commentos = async (userinfor) => {
   }
 };
 
-const pengdisplayan = (userinfor) => {
+// .del-comment
+mapcom.addEventListener("click", (e) => {
+  const userinformasi = [
+    {
+      id: e.target.dataset.id,
+      name: e.target.dataset.name,
+      image: e.target.dataset.image,
+      bio: e.target.dataset.bio,
+      web: e.target.dataset.web,
+    },
+  ];
+
+  if (e.target.className == "bi bi-trash del-comment") {
+    fetch(`${ENDPOINT}/comments/${userinformasi[0].id}`, {
+      method: "DELETE",
+      body: null,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(() => {
+      console.log(coek)
+      fetch(`${ENDPOINT}/putcommmany/${userinfors.filter}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          commentar: `${coek -= 2}`,
+        }),
+      });
+      displayComments(userinfors)
+    });
+  }
+  if (e.target.className == "img-info") {
+    displayinfoprofile(userinformasi);
+  }
+});
+
+const pengdisplayan = (userinfor, text) => {
   const modalPost = document.querySelector(".modal-post");
   if (profileuser.name == userinfor.name) {
     const hapuspost = document.createElement("h3");
     hapuspost.textContent = "Hapus Post";
     hapuspost.classList.add("hapus-post");
     titik3.appendChild(hapuspost);
-    infoacc.style.display = "none"
+    infoacc.style.display = "none";
     const editPost = document.createElement("h3");
+    editPost.classList.add("edit-post");
     editPost.textContent = "Edit Post";
     titik3.appendChild(editPost);
+    displayComment = "del-comment";
   }
-
-
-
-
 
   modalPost.style.display = "flex";
   imgmodalpost.src = userinfor.image;
   ppmodal.src = userinfor.pp;
   namemodal.innerHTML = userinfor.name;
-  usertextpost.innerHTML = userinfor.text;
+  const sbc = userinfor.fulltext.split(" ", 4);
+  if (sbc.length >= 4) {
+    usertextpost.innerHTML = text;
+    const slengkapnya = document.querySelector(".slengkapnya");
+  slengkapnya.addEventListener("click", () => {
+    usertextpost.innerHTML = userinfor.fulltext;
+    imgcoke.style.overflowY = "scroll";
+  });
+  } else {
+    usertextpost.innerHTML = userinfor.fulltext;
+  }
+  
+  
 };
+
 const innerContentBlog = (e) => {
+  
   return `
   <div class="conimage">
           <div class="profile-con-inBlog">
@@ -455,7 +684,7 @@ const innerContentBlog = (e) => {
       <div class="content-tulis-and-like">
           <div class="com-like-waktu">
               <div class="com-like" data-id="${e._id}" data-text="${e.postText}" data-pp="${e.pp}" data-name="${e.nameofpost}" data-image="${e.image}" data-filter="${e.filter}">
-                  <i class="bi bi-heart-fill"></i>
+                  <i class="bi bi-heart-fill" id="${e.filter}" data-click="click"><span>${e.likes}</span></i>
                   <i class="bi bi-chat-right-fill"><span>${e.comments}</span></i>
               </div>
               <p>${e.date}</p>
@@ -467,13 +696,20 @@ const innerContentBlog = (e) => {
   </div>`;
 };
 
+let displayComment = "none";
 const commentshtml = (e) => {
+  if (e.nameofcomment == profileuser.name) {
+    displayComment = "del-comment";
+  }
   return `  <div class="comments-user-post">
-  <img src="${ENDPOINT}/${e.ppofcomment}">
+  <i class="bi bi-trash ${displayComment}" data-id="${e._id}"></i>
+  <img src="${ENDPOINT}/${e.ppofcomment}" data-id="${e._id}" data-image="${e.ppofcomment}" data-name="${e.nameofcomment}"  data-web="${e.web}" data-bio="${e.bio}" class="img-info">
   <div class="text-comm">
       <p><span>${e.nameofcomment}</span>,${e.comment}</p>
+      <div class="flux">
       <h6>${e.date}</h6>
-  </div>
+      </div>
+      </div>
 </div>`;
 };
 
@@ -482,9 +718,7 @@ mappContentBlog();
 const hapuspost = document.querySelector(".hapus-post");
 
 const hapuspostfun = (data) => {
-
   titik3.addEventListener("click", (e) => {
-    console.log(data);
     if (e.target.className == "hapus-post") {
       fetch(`${ENDPOINT}/YourPost/${data.id}`, {
         method: "DELETE",
@@ -497,88 +731,88 @@ const hapuspostfun = (data) => {
         }),
       }).then(location.reload());
     }
-    if (e.target.className == "info-acc"){
-      fetch(`${ENDPOINT}/infouser`,{
-        method:"POST",
-        headers:{
+    if (e.target.className == "info-acc") {
+      fetch(`${ENDPOINT}/infouser`, {
+        method: "POST",
+        headers: {
           "Content-Type": "application/json",
         },
-        body:JSON.stringify({
-          name:data.name
-        })
-      }).then(res => res.json())
-      .then(datas => {
-          displayinfoprofile(datas)
-          
-         
-        
-      }) 
+        body: JSON.stringify({
+          name: data.name,
+        }),
+      })
+        .then((res) => res.json())
+        .then((datas) => {
+          displayinfoprofile(datas);
+        });
+    }
+    if (e.target.className == "edit-post") {
+      const veditinputpost = document.querySelector(".v-editinput-post");
+      const ppnameedit = document.querySelector(".ppname-edit");
+      const kun = document.querySelector(".kun");
+      const imgvedit = document.querySelector(".img-v-edit");
+      const btnpostvedit = document.querySelector(".btn-post-vedit");
+      ppnameedit.innerHTML = data.name;
+      kun.src = data.pp;
+      imgvedit.src = data.image;
+      kuncung.style.display = "flex";
+      veditinputpost.value = data.fulltext;
+
+      btnpostvedit.addEventListener("click", () => {
+        fetch(`${ENDPOINT}/putPost/${data.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postText: veditinputpost.value,
+          }),
+        }).then(() => {
+          location.reload();
+        });
+      });
     }
   });
 };
 
-
-
-const displayinfoprofile = async(datas) => {
+const displayinfoprofile = async (datas) => {
   const modalPost = document.querySelector(".modal-post");
   [containerblog, Todolist, displayProfile, sidebareditprof, absolute].forEach(
-    (el) => (el.style.display = "none"))
-    modalPost.style.display = "none";
-    displayProfile.style.display = 'block'
-    editProfile.style.display = 'none'
+    (el) => (el.style.display = "none")
+  );
+  modalPost.style.display = "none";
+  displayProfile.style.display = "block";
+  let ngeok = datas[0].name == profileuser.name;
+  ngeok ? console.log("displayed") : (editProfile.style.display = "none");
 
-    // map nama-web-bio-pp
-    let data = datas[0]
-    console.log(data)
-    profileName.innerHTML = data.name;
-    document.querySelector(".pp-profile").src = data.image;
-    Bio.innerHTML = data.bio;
-    Web.innerHTML = data.web;
-    Web.href = data.web;
+  // map nama-web-bio-pp
+  let data = datas[0];
 
+  profileName.innerHTML = data.name;
+  document.querySelector(".pp-profile").src = data.image;
+  Bio.innerHTML = data.bio;
+  Web.innerHTML = data.web;
+  Web.href = data.web;
 
+  // map konten-kontennya
+  let respon = await fetch(`${ENDPOINT}/YourPost`);
 
-    // map konten-kontennya
-    let respon = await fetch(`${ENDPOINT}/YourPost`);
+  let datao = await respon.json();
 
-    let datao = await respon.json();
-    
-    let youcontent = "";
-    datao
-      .filter((dataso) => {
-        if (dataso.nameofpost == data.name) {
-          return data;
-        }
-        return dataso.nameofpost === data.name;
-      })
-      .map((dataso) => {
-        youcontent += mappingpostuserp(dataso);
-        console .log(dataso)
-      });
-    yourcontent.innerHTML = youcontent;
-   
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  let youcontent = "";
+  datao
+    .filter((dataso) => {
+      if (dataso.nameofpost == data.name) {
+        return data;
+      }
+      return dataso.nameofpost === data.name;
+    })
+    .map((dataso) => {
+      youcontent += mappingpostuserp(dataso);
+      console.log(dataso);
+    });
+  yourcontent.innerHTML = youcontent;
+};
 
 function dataURItoBlob(dataURI) {
   var byteString;
@@ -632,16 +866,15 @@ BtnTodo.addEventListener("click", (e) => {
         nameofpost: profileuser.name,
         bio: profileuser.bio,
         pp: profileuser.image,
-        postText: inputtodo.value, 
+        postText: inputtodo.value,
         email: profileuser.email,
       }),
     }).then(() => {
       inputtodo.value = "";
-      getprofile()
+      getprofile();
     });
   }
 });
-
 
 const tohtmltodo = (e) => {
   return `
@@ -654,95 +887,72 @@ const tohtmltodo = (e) => {
 };
 
 // delete N edit
-yourtodolist.addEventListener('click',(e) => {
-  e.preventDefault()
-  const id = e.target.parentElement.dataset.id
-  const finish = e.target.id
-  const btnEdittodo = e.target.className == 'bi bi-pencil mrgn-left-5'
-  const btnhspustodo = e.target.className == 'bi bi-trash-fill'
-  const isfinish = e.target.className == 'finish'
-  if(btnhspustodo){
-    fetch(`${ENDPOINT}/todo-list/${id}`,{
-      method:"DELETE",
-      headers:{
+yourtodolist.addEventListener("click", (e) => {
+  e.preventDefault();
+  const id = e.target.parentElement.dataset.id;
+  const finish = e.target.id;
+  const btnEdittodo = e.target.className == "bi bi-pencil mrgn-left-5";
+  const btnhspustodo = e.target.className == "bi bi-trash-fill";
+  const isfinish = e.target.className == "finish";
+  if (btnhspustodo) {
+    fetch(`${ENDPOINT}/todo-list/${id}`, {
+      method: "DELETE",
+      headers: {
         "Content-Type": "application/json",
       },
-      body:null
-    }).then(getprofile())
+      body: null,
+    }).then(getprofile());
   }
 
-  if(btnEdittodo){
-   const h5el = e.target.previousElementSibling
-   const textareaElement = document.createElement('input');
-   textareaElement.classList.add('input-pasmode-edit')
-   textareaElement.value = h5el.textContent;
+  if (btnEdittodo) {
+    const h5el = e.target.previousElementSibling;
+    const textareaElement = document.createElement("input");
+    textareaElement.classList.add("input-pasmode-edit");
+    textareaElement.value = h5el.textContent;
 
+    h5el.replaceWith(textareaElement);
 
-   h5el.replaceWith(textareaElement);
- 
+    const btnedit = e.target;
+    const btndelete = e.target.nextElementSibling;
+    btndelete.style.display = " none";
+    const button = document.createElement("button");
+    button.classList.add("bi-pencil");
 
-   const btnedit = e.target
-   const btndelete = e.target.nextElementSibling
-   btndelete.style.display =" none"
-   const button = document.createElement('button')
-   button.classList.add('bi-pencil')
+    btnedit.replaceWith(button);
+    button.addEventListener("click", () => {
+      fetch(`${ENDPOINT}/todo-list/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postText: textareaElement.value,
+        }),
+      }).then(() => {
+        textareaElement.replaceWith(h5el);
+        h5el.textContent = textareaElement;
+        button.replaceWith(btnedit);
+        btndelete.style.display = "block";
+        getprofile();
+      });
+    });
+  }
 
-
-   btnedit.replaceWith(button)
-   button.addEventListener('click',() => {
-    fetch(`${ENDPOINT}/todo-list/${id}`,{
-      method:"PUT",
-      headers:{
+  if (isfinish) {
+    let isfinishs = finish == "false" ? "true" : "false";
+    fetch(`${ENDPOINT}/todo-list/${id}`, {
+      method: "PUT",
+      headers: {
         "Content-Type": "application/json",
       },
-      body:JSON.stringify({
-        postText:textareaElement.value
-      })
-    }).then(() =>{
-      textareaElement.replaceWith(h5el)
-      h5el.textContent =  textareaElement
-      button.replaceWith(btnedit)
-      btndelete.style.display ="block"
-      getprofile()
-    })
-   })
-  }
-
-  
-  
-  if(isfinish){
-    
-    let isfinishs = finish == "false" ? "true" : "false"
-    fetch(`${ENDPOINT}/todo-list/${id}`,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        isfinish:isfinishs
-      })
+      body: JSON.stringify({
+        isfinish: isfinishs,
+      }),
     }).then(() => {
-      getprofile()
-    })
-
+      getprofile();
+    });
   }
-
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+});
 
 // async function image_to_base64(file) {
 //   let result_base64 = await new Promise((resolve) => {
@@ -833,83 +1043,72 @@ yourtodolist.addEventListener('click',(e) => {
 //       console.log('return err')
 //   }
 let currentTime = new Date();
-let menit =currentTime.getMinutes()
-let pen0= ''
-if(menit <= 9 ){
-
-  pen0 = 0
+let menit = currentTime.getMinutes();
+let pen0 = "";
+if (menit <= 9) {
+  pen0 = 0;
 }
 
-  let time = currentTime.getHours() + "." + pen0 + menit
-  document.querySelector('.jam-tdo').innerHTML = time
-  let psm = ''
-  
-  let jam = currentTime.getHours()
-  if(jam >= 3 && jam <= 10){
-    psm= "Good Moring"
-  }else if(jam >= 10 && jam <= 14){
-    psm = "Good Afternoon"
-  }else if(jam >= 14 && jam <= 18){
-    psm= "Good Evening"
-  }else if (jam >= 18 || jam <= 3){
-    psm ="Good Night"
-  }
+let time = currentTime.getHours() + "." + pen0 + menit;
+document.querySelector(".jam-tdo").innerHTML = time;
+let psm = "";
 
-  document.querySelector('.psm').innerHTML = psm
+let jam = currentTime.getHours();
+if (jam >= 3 && jam <= 10) {
+  psm = "Good Moring";
+} else if (jam >= 10 && jam <= 14) {
+  psm = "Good Afternoon";
+} else if (jam >= 14 && jam <= 18) {
+  psm = "Good Evening";
+} else if (jam >= 18 || jam <= 3) {
+  psm = "Good Night";
+}
 
+document.querySelector(".psm").innerHTML = psm;
 
+const checkbox = document.getElementById("checkbox");
 
-
-const checkbox = document.getElementById('checkbox')
-
-
-
-
-checkbox.addEventListener("change", function(e) {
+checkbox.addEventListener("change", function (e) {
   if (this.checked) {
-    let isfinishs = true
-    fetch(`${ENDPOINT}/todo-list/${e.target.dataset.id}`,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        isfinish:isfinishs
-      })
-    }).then(() => {
-      getprofile()
-    })
-  } else {
-    console.log(false)
-    fetch(`${ENDPOINT}/todo-list/${e.target.dataset.id}`,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        isfinish:false
-      })
-    }).then(() => {
-      getprofile()
-    })
-  }
-});
-~
-
-deletemaintodo.addEventListener('click',() => {
-    fetch(`${ENDPOINT}/todo-list/${checkbox.dataset.id}`,{
-      method:"DELETE",
-      headers:{
+    let isfinishs = true;
+    fetch(`${ENDPOINT}/todo-list/${e.target.dataset.id}`, {
+      method: "PUT",
+      headers: {
         "Content-Type": "application/json",
       },
-      body:null
+      body: JSON.stringify({
+        isfinish: isfinishs,
+      }),
     }).then(() => {
-      mainTodo.style.display = 'block'
-      getprofile()
-      mun.forEach((mun) => {
-        mun.style.display = 'none'
-       })
-       
-    })
-  
-})
+      getprofile();
+    });
+  } else {
+    console.log(false);
+    fetch(`${ENDPOINT}/todo-list/${e.target.dataset.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isfinish: false,
+      }),
+    }).then(() => {
+      getprofile();
+    });
+  }
+});
+~deletemaintodo.addEventListener("click", () => {
+  fetch(`${ENDPOINT}/todo-list/${checkbox.dataset.id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: null,
+  }).then(() => {
+    mainTodo.style.display = "block";
+    getprofile();
+    mun.forEach((mun) => {
+      mun.style.display = "none";
+    });
+  });
+});

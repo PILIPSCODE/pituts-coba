@@ -18,7 +18,9 @@ router.post('/comments',(req,res) => {
         nameofcomment:req.body.nameofcomment,
         ppofcomment:req.body.ppofcomment,
         date:date,
-        email:req.body.email
+        email:req.body.email,
+        bio:req.body.bio,
+        web:req.body.web
     })
     comment.save((err,data) => {
         if(err) console.log(err)
