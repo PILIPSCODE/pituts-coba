@@ -65,7 +65,10 @@ router.post("/YourPost", (req, res) => {
     else {
       if (req.file == undefined) {
         res.send("file no acc");
-      } else {
+      }else if(req.file.size >= 4500000){
+        res.send("file no acc");
+      }else {
+        console.log(req.file)
         const posting = {
           nameofpost: req.body.nameofpost,
           bio:req.body.bio,

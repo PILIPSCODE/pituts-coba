@@ -115,7 +115,12 @@ const getprofile = async () => {
   })
  let datarestok = await tokenres.json()
   token = datarestok
-
+  if(!token.msg){
+    console.log('login')
+    document.querySelector('.blog').style.pointerEvents = ''
+  }else{
+    document.querySelector('.blog').style.pointerEvents = 'none'
+  }
 
 if(datarestok){
 
@@ -156,22 +161,42 @@ if(datarestok){
 
   }
   
+let loadnopost = false
+
+  
+
   const response = await fetch(`${ENDPOINT}/YourPost`);
   const data = await response.json();
   let youcontent = "";
-  data
-    .filter((data) => {
+  let ciu = data.filter((data) => {
       if (data.nameofpost == profileuser.name) {
         return data;
+      }else{
+        data.nameofpost === profileuser.name;
       }
-      return data.nameofpost === profileuser.name;
     })
     .map((data) => {
       youcontent += mappingpostuserp(data);
     });
-  yourcontent.innerHTML = youcontent;
+    let ng = ciu.length == 0
+    if(ng){
+      if(!loadnopost){
+        yourcontent.innerHTML = `
+        
+        <div class="loadnopost">
+        <img src="./img/animation_500_lgtdgvra.gif" class="loadpost" alt="" srcset="">
+        <h3 class="ribet">You haven’t published any post yet</h3>
+        </div>
+        <h3 class="ribot">You haven’t published any post yet</h3>
+      
+        `
+      }
+    }else{
+      loadnopost = true
+      yourcontent.innerHTML = youcontent;
+    }
 
- 
+    // pilipus haven’t published any post yet
 
   
   
@@ -237,9 +262,10 @@ yourcontent.addEventListener("click", (e) => {
     filter: e.target.dataset.filter,
     name: e.target.dataset.name,
     pp: e.target.dataset.pp,
-    text: e.target.dataset.text,
+    fulltext: e.target.dataset.text,
     id:e.target.dataset.id
   };
+  userinfors = userinfor
   if (e.target.className == "img-content-profile") {
     pengdisplayan(userinfor);
     infoacc.style.display = "none"

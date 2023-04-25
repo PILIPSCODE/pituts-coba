@@ -35,10 +35,10 @@ const Usermodel = mongoose.Schema({
       type:String,
       default:"https://pilipscode.github.io/Portfolio-new/"
      },
-     todoispublic:{
-      default:false,
-      type:Boolean
-     }
+      sosials:{
+      type:Array,
+      default:"0"
+     },
 })
 
 

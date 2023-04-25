@@ -159,7 +159,9 @@ body {
     justify-content: space-between;
     color: #1B2326;
 }
-
+.bi-info-circle{
+    font-size: 23px;
+}
 .search-user-name-bio h6 {
     margin: 0;
     border-bottom: 1px solid #1B2326;
@@ -434,7 +436,7 @@ body {
     margin: 10px 5px;
 }
 .bi-chat-right-fill{
-    pointer-events: fill;
+
     color: white;
 }
 .merah{
@@ -656,7 +658,7 @@ body {
     height: 100vh;
     display: none;
     width: 100%;
-    overflow-y: hidden;
+    overflow-y: scroll;
     font-family: 'Josefin Sans', sans-serif;
     color: #F5FEFD;
     background: #1B2326;
@@ -717,17 +719,16 @@ body {
 .bawah {
     display: flex;
     justify-content: center;
+    overflow-x: hidden;
 }
 
 .your-content {
     display: grid;
-    overflow-y: scroll;
-    height: 100vh;
+    padding-bottom: 60px;
+    grid-template-columns: repeat(3, 1fr);
     box-shadow: 0px 0px 98px -80px rgba(255, 255, 255, 0.75);
     -webkit-box-shadow: 0px 0px 98px -60px rgba(255, 255, 255, 0.75);
     -moz-box-shadow: 0px 0px 98px -80px rgba(255, 255, 255, 0.75);
-    grid-template-columns: repeat(3, 1fr);
-    border-top: 2px solid white;
     margin-top: 5px;
 }
 
@@ -741,6 +742,7 @@ body {
     margin: 5px;
     border-radius: 10px;
 }
+
 
 .input-none {
     display: none;
@@ -1341,7 +1343,19 @@ margin-left: 10px;
         display: block;
         right: 20px;
     }
+    .your-content .ribot{
+        display: block;
+        margin-top: 40px;
+        text-align: center;
+        left: 0px;
+        position: absolute;
+    }
+    .bawah .your-content .loadnopost{
+       
+        display: none;
+    }
 }
+   
 
 @media(max-width:640px) {
     .your-content img {
@@ -1501,6 +1515,49 @@ margin-left: 10px;
     animation: 2s 0.2s sekeleton infinite;
     height: 20px;
 }
+.your-content .loadpost{
+    width: 50%;
+    background: #1b2330;
+    margin-bottom: 10px;
+    border-radius: 140px;
+}
+.your-content .loadnopost{
+    display: flex;
+    margin-top: 50px;
+    position: absolute;
+    flex-direction: column;
+    left: -30px;
+    transform: rotateZ(30deg);
+    align-items: center;
+    animation:3s kesana infinite;
+}
+.ribot{
+    display: none;
+}
+
+
+@keyframes kesana{
+    0%{
+        left: -30px;
+        color: #1B2326;
+        transform: rotateZ(30deg);
+    }
+    50%{
+       left: -30px;
+       color: #1B2326;
+       transform: rotateZ(30deg);
+    }
+    90%{
+        left: 250px;
+        color: #F5FEFD;
+        transform: rotateZ(0deg);
+    }
+    100%{
+        left: -30px;
+        color: #1B2326;
+    }
+}
+
 
 
 @keyframes sekeleton {
@@ -1525,3 +1582,4 @@ margin-left: 10px;
         background: gray;
     }
 }
+

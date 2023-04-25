@@ -1,3 +1,5 @@
+
+
 const ENDPOINT = `http://localhost:8080`;
 // Memilih elemen DOM
 const el = (selector) => document.querySelector(selector);
@@ -140,6 +142,17 @@ if (!loading) {
 `;
 }
 
+
+
+
+
+
+
+
+
+
+
+
 // class active untuk navigasi
 const all_nav_link = document.querySelectorAll(".nav-coy");
 navigasi.addEventListener("click", (e) => {
@@ -177,6 +190,7 @@ searchNav.addEventListener("click", () => {
 document.addEventListener("click", (e) => {
   if (![searchNav, searchcon].some((el) => el.contains(e.target))) {
     searchcon.classList.remove("active");
+    
   }
 });
 
@@ -191,7 +205,7 @@ HomeNav.addEventListener("click", () => {
     loginsign,
   ].forEach((el) => (el.style.display = "none"));
   containerblog.style.display = "block";
-  // getprofile();
+ 
 });
 
 // Menambahkan event listener ke elemen todoNav untuk menampilkan todolist dan menyembunyikan blog dan displayProfile
@@ -204,8 +218,17 @@ todoNav.addEventListener("click", () => {
     absolute,
     loginsign,
   ].forEach((el) => (el.style.display = "none"));
-  Todolist.style.display = "flex";
+  if (token == true) {
+    Todolist.style.display = "flex";
+  } else {
+    loginsign.style.display = "flex";
+  }
+  
 });
+
+
+
+  
 
 // Menambahkan event listener ke elemen navProfile untuk menampilkan displayProfile dan menyembunyikan blog dan todolist
 
@@ -218,6 +241,7 @@ navProfile.addEventListener("click", () => {
 const iflogin = () => {
   if (token == true) {
     displayProfile.style.display = "block";
+    getprofile();
   } else {
     loginsign.style.display = "flex";
   }
@@ -288,13 +312,56 @@ const htmlsearch = (e) => {
            <p>${e.bio}</p>
         </div>
         </div>
-        <div class="action-follow-friend">
-           <i class="bi bi-people-fill"></i>
-           <h6 class="follow">Follow</h6>
+        <div class="action-follow-friend" data-image="${e.image}" data-name="${e.name}" data-web="${e.web}" data-bio="${e.bio}" data-sosials="${e.sosials}">
+           <i class="bi bi-people-fill follow"></i>
+           <i class="bi bi-info-circle"></i>
         </div>
         </div>
   `;
 };
+
+
+mapHasilSearch.addEventListener("click",(e) => {
+  let userinfo = {
+    name:e.target.parentElement.dataset.name,
+    bio:e.target.parentElement.dataset.bio,
+    web:e.target.parentElement.dataset.web,
+    sosials:e.target.parentElement.dataset.sosials,
+    image:e.target.parentElement.dataset.image
+  }
+  if(e.target.className == "bi bi-info-circle"){
+    displayinfoprofile([userinfo])
+    searchcon.classList.remove("active");
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let cropper;
 uploadImgPost.addEventListener("change", async function (e) {
@@ -310,7 +377,6 @@ const profileusers = (data) => {
   profileuser = data;
   ppname.innerHTML = data.name;
   profileimgpost.src = data.image;
-  displaylike()
 };
 
 absolute.addEventListener("submit", (e) => {
@@ -366,85 +432,17 @@ const mappContentBlog = async () => {
   blog.innerHTML = el;
 };
 
-// like;
-let liko;
-const displaylike = async (e) => {
-  const res = await fetch(`${ENDPOINT}/like`);
-  const data = await res.json();
-  if(e){
-    let rescok = data.filter((resp) => {
-      if(resp.filt == e.filter){
-        return resp
-      }
-      return resp.filt === e.filter
-    })
-      liko = rescok.length 
-      const likeButton = document.getElementById(`${e.filter}`);
-      console.log(rescok.length)
-      putlike(e.filter,rescok.length)
-        likeButton.textContent = rescok.length
-  }else{
-
-   let resu = data.filter((resp) => {
-        if (resp.nameoflike == profileuser.name) {
-          return resp;
-        }
-        return resp.nameoflike === profileuser.name
-      })
-      // liketot(data)
-  windowreload(resu)
-  }
-};
-
-let postId;
-const windowreload = (resu) => {
- 
-    resu.forEach(postId => {
-          const likeButton = document.getElementById(`${postId.filt}`);
-          likeButton.classList.add('merah')
-          localStorage.setItem(`liked_${postId.filt}`, 'true');
-          let hi = {
-            filter:postId.filt
-          }
-          postId = hi
-          displaylike(hi)
-     });
-  
-}
-
-
-const putlike =(e,jumlah) => {
-      fetch(`${ENDPOINT}/putlikes/${e}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          likes: `${jumlah}`,
-        }),
-      }).then()
-}
 
 
 
 
 
 
-
-
- window.addEventListener('load', event => {
-   // Cek status suka pada local storage
-   if(postId !== undefined){
-     const likeButton = document.getElementById(`${postId.filter}`);
-      const isLiked = localStorage.getItem(`liked_${postId.filter}`);
-      if (isLiked === 'true') {
-        likeButton.classList.add('merah');
-      }
-   }
-  });
 
 // coments
 let userinfors;
+let clicked = false
+let clicle = false
 blog.addEventListener("click", (e) => {
   const userinfor = {
     image: e.target.parentElement.dataset.image,
@@ -458,69 +456,6 @@ blog.addEventListener("click", (e) => {
 
   displayComments(userinfor);
   // liketot(userinfor)
-
-  if(e.target.dataset.click !== undefined){
-    displaylike(userinfor)
-  if(e.target.classList == "bi bi-heart-fill"){
-    fetch(`${ENDPOINT}/like`,{
-      method:"POST",
-      headers:{
-        "Content-Type": "application/json",
-      },
-      body:JSON.stringify({
-        nameoflike:profileuser.name,
-        filter:userinfor.filter + profileuser.id,
-        ppoflikes:profileuser.image,
-        bio:profileuser.bio,
-        web:profileuser.web,
-        filt:userinfor.filter
-      })
-    }).then(res => res.json())
-    .then((data) => {
-     
-    e.target.classList.add('merah')
-    let coelike = Number(e.target.textContent)
-    if(coelike == 0){
-    e.target.textContent = `${coelike += 1}`
-    } 
-    
-    e.target.textContent = `${coelike}`
-    // if(liko !== undefined){
-
-  
-    
-    })
-    
-    
-  }else{
-    displaylike(userinfor)
-    fetch(`${ENDPOINT}/like/${userinfor.filter}${profileuser.id}`,{
-      method:"DELETE",
-      body:null, 
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(() => {
-    e.target.classList.remove('merah')
-    localStorage.removeItem(`liked_${userinfor.filter}`, 'true');
-    let coelike = Number(e.target.textContent) - 1
-    e.target.textContent = `${coelike}`
-  //   if(liko !== undefined){
-  //   fetch(`${ENDPOINT}/putlikes/${userinfor.filter}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       likes: `${liko}`,
-  //     }),
-  //   }).then()
-  // }
-    })
-  }
-
-  }
- 
 
 
   if (e.target.className == "bi bi-chat-right-fill") {
@@ -653,6 +588,7 @@ const pengdisplayan = (userinfor, text) => {
   imgmodalpost.src = userinfor.image;
   ppmodal.src = userinfor.pp;
   namemodal.innerHTML = userinfor.name;
+  console.log(userinfor.fulltext)
   const sbc = userinfor.fulltext.split(" ", 4);
   if (sbc.length >= 4) {
     usertextpost.innerHTML = text;
@@ -787,7 +723,6 @@ const displayinfoprofile = async (datas) => {
 
   // map nama-web-bio-pp
   let data = datas[0];
-
   profileName.innerHTML = data.name;
   document.querySelector(".pp-profile").src = data.image;
   Bio.innerHTML = data.bio;
@@ -795,13 +730,12 @@ const displayinfoprofile = async (datas) => {
   Web.href = data.web;
 
   // map konten-kontennya
+  let loadnopostiio = false
   let respon = await fetch(`${ENDPOINT}/YourPost`);
 
   let datao = await respon.json();
-
   let youcontent = "";
-  datao
-    .filter((dataso) => {
+  let ciuok = datao.filter((dataso) => {
       if (dataso.nameofpost == data.name) {
         return data;
       }
@@ -809,9 +743,24 @@ const displayinfoprofile = async (datas) => {
     })
     .map((dataso) => {
       youcontent += mappingpostuserp(dataso);
-      console.log(dataso);
     });
-  yourcontent.innerHTML = youcontent;
+    let ng = ciuok.length == 0
+    yourcontent.innerHTML = youcontent;
+    if(ng){
+      if(!loadnopostiio){
+        yourcontent.style.border = "none"
+        yourcontent.innerHTML = `
+        
+        <div class="loadnopost">
+        <img src="./img/animation_500_lgtdgvra.gif" class="loadpost" alt="" srcset="">
+        <h3 class="ribet">${data.name} haven’t published any post yet</h3>
+        </div>
+        <h3 class="ribot">${data.name} haven’t published any post yet</h3>
+        `
+      }
+    }else{
+      loadnopostiio = true
+    }
 };
 
 function dataURItoBlob(dataURI) {
@@ -1097,18 +1046,22 @@ checkbox.addEventListener("change", function (e) {
     });
   }
 });
-~deletemaintodo.addEventListener("click", () => {
-  fetch(`${ENDPOINT}/todo-list/${checkbox.dataset.id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: null,
-  }).then(() => {
-    mainTodo.style.display = "block";
-    getprofile();
-    mun.forEach((mun) => {
-      mun.style.display = "none";
-    });
-  });
-});
+~
+
+deletemaintodo.addEventListener('click',() => {
+    fetch(`${ENDPOINT}/todo-list/${checkbox.dataset.id}`,{
+      method:"DELETE",
+      headers:{
+        "Content-Type": "application/json",
+      },
+      body:null
+    }).then(() => {
+      mainTodo.style.display = 'block'
+      getprofile()
+      mun.forEach((mun) => {
+        mun.style.display = 'none'
+       })
+       
+    })
+  
+})
