@@ -215,6 +215,8 @@ const formedit = document.querySelector(".conEdit-profile");
 const EditProfile = (datas) => {
   formedit.addEventListener("submit", (e) => {
     e.preventDefault();
+    document.querySelector('.load-put').style.display = 'block'
+
     const formdata = new FormData();
     formdata.append("name", editNameProfile.value);
     formdata.append("email", `${datas.email}`);
@@ -224,19 +226,20 @@ const EditProfile = (datas) => {
     if (edit_pp_img.files[0]) {
       formdata.append("image", edit_pp_img.files[0], randomString(20) + ".png");
     }
-    fetch(`${ENDPOINT}/upload/${datas.id}`, {
-      method: "PUT",
-      body: formdata,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          location.reload()
-        
-        }
+      fetch(`${ENDPOINT}/upload/${datas.id}`, {
+        method: "PUT",
+        body: formdata,
       })
-      .catch((err) => console.log(err));
-  });
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            document.querySelector('.load-put').textContent ="selesai!!"
+            location.reload()
+          
+          }
+        })
+        .catch((err) => console.log(err));
+    });
 };
 
 

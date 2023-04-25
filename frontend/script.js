@@ -381,7 +381,7 @@ const profileusers = (data) => {
 
 absolute.addEventListener("submit", (e) => {
   e.preventDefault();
-
+  document.querySelector('.load-pit').style.display = 'block'
   //  cropper
   // let canvas = cropper.getCroppedCanvas({
   //   width: 500,
@@ -399,16 +399,20 @@ absolute.addEventListener("submit", (e) => {
   fromdata.append("email", profileuser.email);
   fromdata.set("nameofpost", profileuser.name);
   fromdata.append("image", uploadImgPost.files[0], randomString(20) + ".png");
-  fetch(`${ENDPOINT}/YourPost`, {
-    method: "POST",
-    body: fromdata,
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      location.reload();
+
+
+    fetch(`${ENDPOINT}/YourPost`, {
+      method: "POST",
+      body: fromdata,
     })
-    .catch((err) => console.log(err));
-});
+      .then((res) => res.json())
+      .then((data) => {
+        document.querySelector('.load-pit').textContent ="selesai!!"
+        location.reload();
+      })
+      .catch((err) => console.log(err));
+  });
+
 
 closePost.forEach((e) => {
   e.addEventListener("click", () => {
@@ -456,6 +460,11 @@ blog.addEventListener("click", (e) => {
 
   displayComments(userinfor);
   // liketot(userinfor)
+  
+  if(e.target.className == 'bi bi-heart-fill'){
+    alert('next fitur coy mumet..')
+  }
+
 
 
   if (e.target.className == "bi bi-chat-right-fill") {

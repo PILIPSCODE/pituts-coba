@@ -1173,6 +1173,10 @@ margin-left: 10px;
     display: none;
     right: 0px;
 }
+.load-put,.load-pit{
+    text-align: center;
+    display: none;
+}
 /* responsive */
 @media(max-width:786px) {
     .children a.ontap {
