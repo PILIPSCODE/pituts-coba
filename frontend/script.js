@@ -1,6 +1,6 @@
 
 
-const ENDPOINT = `http://localhost:8080`;
+const ENDPOINT = `https://pituts-coba-production.up.railway.app`;
 // Memilih elemen DOM
 const el = (selector) => document.querySelector(selector);
 const [
